@@ -14,5 +14,3 @@ structopt = "0.3"
 sys-mount = "2"
 nanoid = "0.4.0"
 carlog = "0.1.0"
-
-rusync = "0.7.2"

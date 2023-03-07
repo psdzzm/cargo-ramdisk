@@ -25,6 +25,11 @@ use structopt::StructOpt;
 const BASE_RAMDISK_FOLDER: &str = "/dev/shm";
 
 fn main() -> Result<()> {
+    if !cfg!(target_os = "linux") {
+        carlog_error!("This program only works on Linux");
+        exit(1);
+    }
+
     let mut args = env::args().peekable();
     let _bin = args.next().expect("No program name...");
     if let Some(s) = args.peek() {
@@ -248,7 +253,7 @@ mod test {
         mount, remount, unmount, MountConfig, RemountConfig, UnmountConfig, BASE_RAMDISK_FOLDER,
     };
     use std::env::temp_dir;
-    use std::fs::{remove_dir_all, self, FileTimes, File};
+    use std::fs::{self, remove_dir_all, File, FileTimes};
     use std::path::{Path, PathBuf};
 
     #[test]
@@ -284,7 +289,7 @@ mod test {
         assert!(!target.exists());
     }
 
-    pub fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<(), std::io::Error> {
+    fn copy<U: AsRef<Path>, V: AsRef<Path>>(from: U, to: V) -> Result<(), std::io::Error> {
         let mut stack = Vec::new();
         stack.push(PathBuf::from(from.as_ref()));
 
